@@ -41,9 +41,10 @@ public class trainInput {
 			ArrayList<Double> row = new ArrayList<Double>();
 			for (int i = 0; i < splitData.length; i++) {
 				if (!(splitData[i] == null) || !(splitData[i].length() == 0)) {
-					Double.parseDouble(splitData[i].trim());
+					row.add(Double.parseDouble(splitData[i].trim()));
 				}
 			}
+			input.add(row);
 		}
 
 		return input;
