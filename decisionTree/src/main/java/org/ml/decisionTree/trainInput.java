@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CSVReader {
+public class trainInput {
 	public static void main(String[] args) {
 
 		BufferedReader buffer = null;
@@ -17,9 +17,7 @@ public class CSVReader {
 							"/Users/Kunal/Downloads/programming-assignment1/gene_expression_training.csv"));
 
 			while ((line = buffer.readLine()) != null) {
-				System.out.println("Raw CSV data: " + line);
-				System.out.println("Converted ArrayList data: "
-						+ csvtoArrayList(line) + "\n");
+
 			}
 
 		} catch (IOException e) {
@@ -34,18 +32,20 @@ public class CSVReader {
 		}
 	}
 
-	public static ArrayList<String> csvtoArrayList(String csvString) {
-		ArrayList<String> result = new ArrayList<String>();
+	public static ArrayList<ArrayList<Double>> csvtoArrayList(String csvString) {
+
+		ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
 
 		if (csvString != null) {
 			String[] splitData = csvString.split("\\s*,\\s*");
+			ArrayList<Double> row = new ArrayList<Double>();
 			for (int i = 0; i < splitData.length; i++) {
 				if (!(splitData[i] == null) || !(splitData[i].length() == 0)) {
-					result.add(splitData[i].trim());
+					Double.parseDouble(splitData[i].trim());
 				}
 			}
 		}
 
-		return result;
+		return input;
 	}
 }
