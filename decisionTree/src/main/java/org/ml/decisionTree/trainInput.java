@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class trainInput {
-	public static void main(String[] args) {
+	ArrayList<String> attributes = new ArrayList<String>();
+	ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
+
+	public void readData() {
 
 		BufferedReader buffer = null;
 
@@ -16,8 +19,17 @@ public class trainInput {
 					new FileReader(
 							"/Users/Kunal/Downloads/programming-assignment1/gene_expression_training.csv"));
 
-			while ((line = buffer.readLine()) != null) {
+			String[] splitHeader = buffer.readLine().split("\\s*,\\s*");
+			for (int i = 0; i < splitHeader.length; i++) {
+				if (!(splitHeader[i] == null)
+						|| !(splitHeader[i].length() == 0)) {
+					this.attributes.add(splitHeader[i]);
 
+				}
+			}
+
+			while ((line = buffer.readLine()) != null) {
+				csvtoArrayList(line);
 			}
 
 		} catch (IOException e) {
@@ -32,9 +44,7 @@ public class trainInput {
 		}
 	}
 
-	public static ArrayList<ArrayList<Double>> csvtoArrayList(String csvString) {
-
-		ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
+	public void csvtoArrayList(String csvString) {
 
 		if (csvString != null) {
 			String[] splitData = csvString.split("\\s*,\\s*");
@@ -44,9 +54,8 @@ public class trainInput {
 					row.add(Double.parseDouble(splitData[i].trim()));
 				}
 			}
-			input.add(row);
+			this.input.add(row);
 		}
 
-		return input;
 	}
 }
