@@ -25,7 +25,7 @@ public class TrainInput {
 			buffer = new BufferedReader(new FileReader(this.filePath));
 
 			String[] splitHeader = buffer.readLine().split("\\s*,\\s*");
-			for (int i = 0; i < splitHeader.length-1; i++) { // to remove the label for the classifier
+			for (int i = 0; i < splitHeader.length; i++) { // to remove the label for the classifier
 				if (!(splitHeader[i] == null)
 						|| !(splitHeader[i].length() == 0)) {
 					this.attributes.add(splitHeader[i]);

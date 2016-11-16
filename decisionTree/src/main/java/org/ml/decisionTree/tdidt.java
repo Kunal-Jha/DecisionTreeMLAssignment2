@@ -11,9 +11,8 @@ import org.graphstream.graph.implementations.DefaultGraph;
 
 public class tdidt {
 
-	private Node root;
-	private int nodeIndex = 0;
-	private Graph graph = new DefaultGraph("Tree");
+	int nodeIndex = 0;
+	Graph graph = new DefaultGraph("Tree");
 
 	Double CLASS_POSITIVE = 1.0;
 	Double CLASS_NEGATIVE = 0.0;
@@ -54,16 +53,20 @@ public class tdidt {
 		return examplesList;
 	}
 
-	public Graph tdidt_recursive(ArrayList<ArrayList<Double>> trainingdata,
+	public Graph tdidt_recursive(ArrayList<ArrayList<Double>> traindata,
 			ArrayList<String> attributesList, Graph T, Node node) {
 
-		// if the examples are perfectly classified
+		T.getNode(node.getId()).addAttribute("isLeaf", false);
+		T.getNode(node.getId()).addAttribute("attribute", 0); // 0 or 1
 
-		double c = trainingdata.get(0).get(trainingdata.get(0).size() - 1);
-		if (isPerfectlyClassified(trainingdata)) {
-			T.getNode(node.getId()).addAttribute("isLeaf", true);
-			T.getNode(node.getId()).addAttribute("attribute", c); // 0 or 1
-			return T;
+		// if the examples are perfectly classified
+		if (!traindata.isEmpty()) {
+			double c = traindata.get(0).get(traindata.get(0).size() - 1);
+			if (isPerfectlyClassified(traindata)) {
+				T.getNode(node.getId()).setAttribute("isLeaf", true);
+				T.getNode(node.getId()).setAttribute("attribute", c); // 0 or 1
+				return T;
+			}
 		}
 
 		// if else 3. 4. in algo
@@ -74,25 +77,27 @@ public class tdidt {
 		// TODO ----------------
 
 		// select best test
-		Double minInformationGain_InterAttribute = Double.MAX_VALUE;
+		Double maxInformationGain_InterAttribute = Double.MIN_VALUE;
 		int selectedAttributeIndex = 0;
 		Double splitPointValue = 0.0;
 		for (int i = 0; i < attributesList.size() - 1; i++) {
-			Tuple minInformationGainInfo = getSplitPointAtMinimumInformationGainForAttribute(getAttributePlusClassifierColumnList(
-					trainingdata, i));
+			Tuple maxInformationGainInfo = getSplitPointAtMinimumInformationGainForAttribute(getAttributePlusClassifierColumnList(
+					traindata, i));
 
-			Double currentInformationGain = minInformationGainInfo
+			Double currentInformationGain = maxInformationGainInfo
 					.getInformationGain();
-
-			if (currentInformationGain < minInformationGain_InterAttribute) {
-				minInformationGain_InterAttribute = currentInformationGain;
+			// Get max information gain
+			if (currentInformationGain > maxInformationGain_InterAttribute) {
+				maxInformationGain_InterAttribute = currentInformationGain;
 				selectedAttributeIndex = i;
-				splitPointValue = minInformationGainInfo.getSplitPoint();
+				splitPointValue = maxInformationGainInfo.getSplitPoint();
 			}
 		}
 
 		node.setAttribute("attribute",
 				attributesList.get(selectedAttributeIndex));
+
+		node.setAttribute("splitValue", splitPointValue);
 
 		// 7 in algo. Two possibilities for tree to grow. We know the split
 		// point and the attribute being analysed
@@ -101,17 +106,17 @@ public class tdidt {
 		ArrayList<ArrayList<Double>> lessThanBranchExampleList = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> greaterThanBranchExampleList = new ArrayList<ArrayList<Double>>();
 
-		for (int i = 0; i < trainingdata.size(); i++) {
-			if (trainingdata.get(i).get(selectedAttributeIndex) < splitPointValue) {
-				trainingdata.get(i).remove(selectedAttributeIndex);// removing
-																	// the
-																	// already
-																	// evaluated
-																	// attribute.
-				lessThanBranchExampleList.add(trainingdata.get(i));
+		for (int i = 0; i < traindata.size(); i++) {
+			if (traindata.get(i).get(selectedAttributeIndex) < splitPointValue) {
+				traindata.get(i).remove(selectedAttributeIndex);// removing
+																// the
+																// already
+																// evaluated
+																// attribute.
+				lessThanBranchExampleList.add(traindata.get(i));
 			} else {
-				trainingdata.get(i).remove(selectedAttributeIndex);
-				greaterThanBranchExampleList.add(trainingdata.get(i));
+				traindata.get(i).remove(selectedAttributeIndex);
+				greaterThanBranchExampleList.add(traindata.get(i));
 			}
 		}
 
@@ -122,8 +127,11 @@ public class tdidt {
 
 		tdidt_recursive(lessThanBranchExampleList, attributesList, T,
 				lessThanNode);
+		graph.addEdge(String.valueOf(nodeIndex-1 +"L"), node, lessThanNode);
+
 		tdidt_recursive(greaterThanBranchExampleList, attributesList, T,
 				greaterThanNode);
+		graph.addEdge(String.valueOf(nodeIndex-1 +"R"), node, greaterThanNode);
 
 		return T;
 	}
@@ -192,15 +200,15 @@ public class tdidt {
 			}
 		}
 
-		Double minInformationGain = Double.MAX_VALUE, resultSplitPoint = 0.0;
+		Double maxInformationGain = Double.MIN_VALUE, resultSplitPoint = 0.0;
 		for (int i = 0; i < informationGainValues.size(); i++) {
-			if (informationGainValues.get(i).get(1) < minInformationGain) {
+			if (informationGainValues.get(i).get(1) >= maxInformationGain) {
 				resultSplitPoint = informationGainValues.get(i).get(0);
-				minInformationGain = informationGainValues.get(i).get(1);
+				maxInformationGain = informationGainValues.get(i).get(1);
 			}
 		}
 
-		return new Tuple(resultSplitPoint, minInformationGain);
+		return new Tuple(resultSplitPoint, maxInformationGain);
 	}
 
 	private Double getEntropy(int positiveCount, int negativeCount) {
@@ -228,15 +236,7 @@ public class tdidt {
 		return result;
 	}
 
-	private ArrayList<Double> getAttributeColumnList(
-			ArrayList<ArrayList<Double>> examplesList, int columnIndex) {
-		ArrayList<Double> result = new ArrayList<Double>();
-		for (int i = 0; i < examplesList.size(); i++) {
-			result.add(examplesList.get(i).get(columnIndex));
-		}
-		return result;
-	}
-
+	// TODO compare i and i+1
 	private boolean isPerfectlyClassified(
 			ArrayList<ArrayList<Double>> examplesList) {
 		double c = examplesList.get(0).get(examplesList.get(0).size() - 1);
@@ -256,8 +256,8 @@ public class tdidt {
 	}
 
 	private class Tuple {
-		private Double informationGain;
-		private Double splitPoint;
+		Double informationGain;
+		Double splitPoint;
 
 		public Tuple(Double _informationGain, Double _splitPoint) {
 			this.informationGain = _informationGain;
@@ -268,17 +268,10 @@ public class tdidt {
 			return splitPoint;
 		}
 
-		public void setSplitPoint(Double splitPoint) {
-			this.splitPoint = splitPoint;
-		}
-
 		public Double getInformationGain() {
 			return informationGain;
 		}
 
-		public void setInformationGain(Double informationGain) {
-			this.informationGain = informationGain;
-		}
 	}
 
 }
