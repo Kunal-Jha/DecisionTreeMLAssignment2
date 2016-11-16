@@ -2,9 +2,9 @@ package org.ml.decisionTree;
 
 import java.util.ArrayList;
 
-public class Node {
+public class Node  {
 
-	private String attribute;
+	/*private String attribute;
 
 	private ArrayList<Node> children = new ArrayList<Node>();
 
@@ -33,5 +33,5 @@ public class Node {
 	public Node() {
 
 	}
-
+*/
 }

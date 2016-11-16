@@ -1,13 +1,15 @@
 package org.ml.decisionTree;
 
 import java.io.BufferedReader;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class trainInput {
-	ArrayList<String> attributes = new ArrayList<String>();
-	ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
+	private String filePath;
+	private ArrayList<String> attributes = new ArrayList<String>();
+	private ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
 
 	public void readData() {
 
@@ -17,7 +19,7 @@ public class trainInput {
 			String line;
 			buffer = new BufferedReader(
 					new FileReader(
-							"/Users/Kunal/Downloads/programming-assignment1/gene_expression_training.csv"));
+							this.filePath));
 
 			String[] splitHeader = buffer.readLine().split("\\s*,\\s*");
 			for (int i = 0; i < splitHeader.length; i++) {
@@ -58,4 +60,33 @@ public class trainInput {
 		}
 
 	}
+	
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public ArrayList<String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(ArrayList<String> attributes) {
+		this.attributes = attributes;
+	}
+
+	public ArrayList<ArrayList<Double>> getInput() {
+		return input;
+	}
+
+	public void setInput(ArrayList<ArrayList<Double>> input) {
+		this.input = input;
+	}
+
+	public trainInput(String filePath){
+		this.filePath = filePath;
+	}
+	
 }
