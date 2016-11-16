@@ -1,15 +1,20 @@
 package org.ml.decisionTree;
 
 import java.io.BufferedReader;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class trainInput {
+public class TrainInput {
 	private String filePath;
 	private ArrayList<String> attributes = new ArrayList<String>();
-	private ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
+	private  ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
+
+//	public static void main(String[] args) {
+//		TrainInput tn = new TrainInput("./assets/gene_expression_training.csv");
+//
+//
+//	}
 
 	public void readData() {
 
@@ -17,12 +22,10 @@ public class trainInput {
 
 		try {
 			String line;
-			buffer = new BufferedReader(
-					new FileReader(
-							this.filePath));
+			buffer = new BufferedReader(new FileReader(this.filePath));
 
 			String[] splitHeader = buffer.readLine().split("\\s*,\\s*");
-			for (int i = 0; i < splitHeader.length; i++) {
+			for (int i = 0; i < splitHeader.length-1; i++) { // to remove the label for the classifier
 				if (!(splitHeader[i] == null)
 						|| !(splitHeader[i].length() == 0)) {
 					this.attributes.add(splitHeader[i]);
@@ -60,7 +63,7 @@ public class trainInput {
 		}
 
 	}
-	
+
 	public String getFilePath() {
 		return filePath;
 	}
@@ -85,8 +88,9 @@ public class trainInput {
 		this.input = input;
 	}
 
-	public trainInput(String filePath){
+	public TrainInput(String filePath) {
 		this.filePath = filePath;
+		this.readData();
 	}
-	
+
 }
