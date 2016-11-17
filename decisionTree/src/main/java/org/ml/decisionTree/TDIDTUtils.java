@@ -138,9 +138,10 @@ public class TDIDTUtils {
 	// TODO compare i and i+1
 	public boolean isPerfectlyClassified(
 			ArrayList<ArrayList<Double>> examplesList) {
-		double c = examplesList.get(0).get(examplesList.get(0).size() - 1);
-		for (int i = 1; i < examplesList.size(); i++) {
-			if (c != examplesList.get(i).get(examplesList.get(0).size() - 1)) {
+
+		for (int i = 0; i < examplesList.size() - 1; i++) {
+			if ((examplesList.get(i + 1).get(examplesList.get(0).size() - 1) != (examplesList
+					.get(i).get(examplesList.get(0).size() - 1)))) {
 				return false;
 			}
 		}

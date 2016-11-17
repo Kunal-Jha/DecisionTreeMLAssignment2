@@ -18,28 +18,29 @@ public class tdidt {
 	Node root;
 	TDIDTUtils utility;
 	ArrayList<ArrayList<Double>> trainingData;
+	double accuracy;
 	ArrayList<String> attributesList;
 
 	public static void main(String[] args) {
-		tdidt algo = new tdidt();
+		tdidt algo = new tdidt("./assets/gene_expression_training.csv");
 		algo.tdidt_recursive(algo.trainingData, algo.attributesList, algo.root,
 				algo.root, algo.nodeIndex);
 		algo.drawTree();
 	}
 
-	tdidt() {
+	tdidt(String path) {
 		// TODO Auto-generated constructor stub
-		TrainInput trainingInput = new TrainInput(
-				"./assets/gene_expression_training.csv");
+		TrainInput trainingInput = new TrainInput(path);
 		this.trainingData = trainingInput.getInput();
 		this.attributesList = trainingInput.getAttributes();
 		this.root = new Node(Integer.toString(nodeIndex));
+		this.utility = new TDIDTUtils();
 		this.graph = new DefaultDirectedGraph<Node, DefaultEdge>(
 				DefaultEdge.class);
-
+		this.accuracy = 0;
 	}
 
-	public static void getDOTFile(DirectedGraph<Node, DefaultEdge> graph)
+	public void getDOTFile(DirectedGraph<Node, DefaultEdge> graph)
 			throws IOException {
 
 		DOTExporter<Node, DefaultEdge> dot = new DOTExporter<Node, DefaultEdge>(
@@ -91,6 +92,7 @@ public class tdidt {
 		if (!traindata.isEmpty()) {
 			if (utility.isPerfectlyClassified(traindata)) {
 				root.setLeaf(true);
+				root.setSplitpoint(Double.MIN_VALUE);
 				return root;
 
 			}
@@ -132,7 +134,7 @@ public class tdidt {
 		Node rightNode = new Node(Integer.toString(nodeIndex) + " R");
 		currentNode.setLeft(leftNode);
 		currentNode.setRight(rightNode);
-
+		root.setSplitpoint(attribute.getColSplitPoint());
 		tdidt_recursive(lessThanBranchData, attributesList, root, leftNode,
 				this.nodeIndex);
 
@@ -140,6 +142,11 @@ public class tdidt {
 				this.nodeIndex);
 
 		return root;
+	}
+
+	public double accuracyTest(String path) {
+
+		return this.accuracy;
 	}
 
 }

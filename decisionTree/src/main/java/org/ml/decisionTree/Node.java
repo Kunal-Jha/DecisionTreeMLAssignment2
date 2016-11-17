@@ -5,14 +5,23 @@ import java.util.ArrayList;
 public class Node {
 
 	public String attribute;
+	public Double splitpoint;
 
-	public ArrayList<Node> children = new ArrayList<Node>();
+	public Double getSplitpoint() {
+		return splitpoint;
+	}
+
+	public void setSplitpoint(Double splitpoint) {
+		this.splitpoint = splitpoint;
+	}
+
+	public ArrayList<Node> children;
 	boolean isLeaf;
 
 	public Node(String attribute) {
 
 		this.attribute = attribute;
-		this.children = null;
+		this.children = new ArrayList<Node>();
 		this.isLeaf = false;
 	}
 
