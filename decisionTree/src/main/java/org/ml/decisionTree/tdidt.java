@@ -102,7 +102,8 @@ public class tdidt {
 		Tuple attribute = utility.chooseAttribute(traindata, attributesList,
 				nodeCount);
 		// when the number of attribute is 7
-		if (attribute == null) {
+		// Put the count on check
+		if ((attribute == null) || (nodeCount == 7)) {
 			utility.dealWithNoSplit(traindata, currentNode);
 			return root;
 		}
@@ -125,6 +126,7 @@ public class tdidt {
 			}
 		}
 
+		// TODO problem is here. delete more efficiently
 		attributesList.remove(attribute.getSelectedIndex());
 
 		// TODO Check passing of Node Index it should be equal to 0s

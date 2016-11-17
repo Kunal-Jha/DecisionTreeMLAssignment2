@@ -30,18 +30,20 @@ public class TDIDTUtils {
 		}
 		Double maxInformationGain_InterAttribute = Double.MIN_VALUE;
 		int selectedAttributeIndex = 0;
+
 		Double splitPointValue = 0.0;
 		Double colSplitPointValue = 0.0;
 		for (int i = 0; i < attributesList.size() - 1; i++) {
 			Tuple columnTuple = this.getBestSplitforAttribute(this
 					.getAttributeClassifierColumn(trainingData, i));
+			columnTuple.setSelectedIndex(i);
 
 			Double currentInformationGain = columnTuple.getInformationGain();
 			// Get max information gain
 			if (currentInformationGain > maxInformationGain_InterAttribute) {
 				maxInformationGain_InterAttribute = currentInformationGain;
 				splitPointValue = columnTuple.getSplitPoint();
-				selectedAttributeIndex = i;
+				selectedAttributeIndex = columnTuple.getSelectedIndex();
 				colSplitPointValue = columnTuple.getSplitPoint();
 			}
 		}
@@ -114,7 +116,6 @@ public class TDIDTUtils {
 			if (splitsGainValues.get(i).get(1) >= maxInformationGain) {
 				resultSplitPoint = splitsGainValues.get(i).get(0);
 				maxInformationGain = splitsGainValues.get(i).get(1);
-				index = i;
 
 			}
 		}
@@ -135,7 +136,6 @@ public class TDIDTUtils {
 		}
 	}
 
-	// TODO compare i and i+1
 	public boolean isPerfectlyClassified(
 			ArrayList<ArrayList<Double>> examplesList) {
 
