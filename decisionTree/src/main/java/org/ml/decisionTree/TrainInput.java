@@ -8,13 +8,13 @@ import java.util.ArrayList;
 public class TrainInput {
 	private String filePath;
 	private ArrayList<String> attributes = new ArrayList<String>();
-	private  ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
+	private ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
 
-//	public static void main(String[] args) {
-//		TrainInput tn = new TrainInput("./assets/gene_expression_training.csv");
-//
-//
-//	}
+	// public static void main(String[] args) {
+	// TrainInput tn = new TrainInput("./assets/gene_expression_training.csv");
+	//
+	//
+	// }
 
 	public void readData() {
 
@@ -25,7 +25,7 @@ public class TrainInput {
 			buffer = new BufferedReader(new FileReader(this.filePath));
 
 			String[] splitHeader = buffer.readLine().split("\\s*,\\s*");
-			for (int i = 0; i < splitHeader.length; i++) { // to remove the label for the classifier
+			for (int i = 0; i < splitHeader.length; i++) {
 				if (!(splitHeader[i] == null)
 						|| !(splitHeader[i].length() == 0)) {
 					this.attributes.add(splitHeader[i]);

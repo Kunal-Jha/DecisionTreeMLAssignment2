@@ -2,16 +2,42 @@ package org.ml.decisionTree;
 
 import java.util.ArrayList;
 
-public class Node  {
+public class Node {
 
-	/*private String attribute;
+	public String attribute;
 
-	private ArrayList<Node> children = new ArrayList<Node>();
+	public ArrayList<Node> children = new ArrayList<Node>();
+	boolean isLeaf;
 
-	public Node(String attribute, ArrayList<Node> children) {
-		super();
+	public Node(String attribute) {
+
 		this.attribute = attribute;
-		this.children = children;
+		this.children = null;
+		this.isLeaf = false;
+	}
+
+	public void setLeft(Node a) {
+		this.children.add(0, a);
+	}
+
+	public Node getLeft() {
+		return this.children.get(0);
+	}
+
+	public Node getRight() {
+		return this.children.get(1);
+	}
+
+	public void setRight(Node a) {
+		this.children.add(1, a);
+	}
+
+	public boolean isLeaf() {
+		return isLeaf;
+	}
+
+	public void setLeaf(boolean isLeaf) {
+		this.isLeaf = isLeaf;
 	}
 
 	public String getAttribute() {
@@ -22,16 +48,8 @@ public class Node  {
 		this.attribute = attribute;
 	}
 
-	public ArrayList<Node> getChildren() {
-		return children;
-	}
-
-	public void setChildren(ArrayList<Node> children) {
-		this.children = children;
-	}
-
 	public Node() {
 
 	}
-*/
+
 }
