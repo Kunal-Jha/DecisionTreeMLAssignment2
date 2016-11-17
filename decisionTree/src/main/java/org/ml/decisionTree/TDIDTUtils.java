@@ -166,12 +166,14 @@ public class TDIDTUtils {
 		if (countNeg > countPos) {
 			Node x = new Node();
 			x.setAttribute("0");
+			x.setSplitpoint(0.0);
 			currentNode.setLeft(x);
 			;
 		} else {
 
 			Node x = new Node();
 			x.setAttribute("1");
+			x.setSplitpoint(1.0);
 			currentNode.setRight(x);
 		}
 	}

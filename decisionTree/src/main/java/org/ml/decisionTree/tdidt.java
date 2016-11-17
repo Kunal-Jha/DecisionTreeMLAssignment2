@@ -26,6 +26,7 @@ public class tdidt {
 		algo.tdidt_recursive(algo.trainingData, algo.attributesList, algo.root,
 				algo.root, algo.nodeIndex);
 		algo.drawTree();
+		// algo.accuracyTest("./assets/gene_expression_test.csv");
 	}
 
 	tdidt(String path) {
@@ -135,6 +136,7 @@ public class tdidt {
 		currentNode.setLeft(leftNode);
 		currentNode.setRight(rightNode);
 		root.setSplitpoint(attribute.getColSplitPoint());
+		root.setAttributeIndex(attribute.getSelectedIndex());
 		tdidt_recursive(lessThanBranchData, attributesList, root, leftNode,
 				this.nodeIndex);
 
@@ -145,8 +147,30 @@ public class tdidt {
 	}
 
 	public double accuracyTest(String path) {
+		TrainInput testingInput = new TrainInput(path);
+		Double error = 0.0;
+		ArrayList<ArrayList<Double>> testingData = testingInput.getInput();
+		for (ArrayList<Double> a : testingData) {
+			if (a.get(a.size() - 1).equals(test(this.root, a))) {
+				error++;
+			}
 
+		}
+
+		this.accuracy = (1 - (error / testingData.size())) * 100;
 		return this.accuracy;
+	}
+
+	public Double test(Node currentNode, ArrayList<Double> pattern) {
+		if (currentNode.isLeaf() == false) {
+			int index = currentNode.getAttributeIndex();
+			if (pattern.get(index) < currentNode.getSplitpoint())
+				return test(currentNode.getLeft(), pattern);
+			else
+				return test(currentNode.getRight(), pattern);
+		}
+
+		return currentNode.getSplitpoint();
 	}
 
 }

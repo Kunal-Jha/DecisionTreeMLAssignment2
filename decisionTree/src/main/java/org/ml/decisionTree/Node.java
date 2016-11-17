@@ -6,6 +6,15 @@ public class Node {
 
 	public String attribute;
 	public Double splitpoint;
+	public int attributeIndex;
+
+	public int getAttributeIndex() {
+		return attributeIndex;
+	}
+
+	public void setAttributeIndex(int attributeIndex) {
+		this.attributeIndex = attributeIndex;
+	}
 
 	public Double getSplitpoint() {
 		return splitpoint;
@@ -23,6 +32,7 @@ public class Node {
 		this.attribute = attribute;
 		this.children = new ArrayList<Node>();
 		this.isLeaf = false;
+		this.attributeIndex = -1;
 	}
 
 	public void setLeft(Node a) {
