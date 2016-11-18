@@ -23,9 +23,9 @@ public class TDIDTUtils {
 	}
 
 	public Tuple chooseAttribute(ArrayList<ArrayList<Double>> trainingData,
-			ArrayList<String> attributesList, int nodecount) {
+			ArrayList<String> attributesList, int nodecount, int depthAllowed) {
 
-		if (nodecount == 7) {
+		if (nodecount > depthAllowed) {
 			return null;
 		}
 		Double maxInformationGain_InterAttribute = Double.MIN_VALUE;
@@ -128,9 +128,9 @@ public class TDIDTUtils {
 		// System.out.println(totalCount + " " + positiveCount + " "
 		// + negativeCount);
 		if (totalCount != 0 && positiveCount != 0 && negativeCount != 0) {
-			return ((positiveCount / totalCount)
-					* log2(totalCount / positiveCount) + (negativeCount / totalCount)
-					* log2(totalCount / negativeCount));
+			return (((double)positiveCount / totalCount)
+					* log2((double)totalCount / positiveCount) + ((double)negativeCount / totalCount)
+					* log2((double)totalCount / negativeCount));
 		} else {
 			return 0.0;
 		}
@@ -149,18 +149,19 @@ public class TDIDTUtils {
 	}
 
 	// TODO:Check Dataset
-	public void dealWithNoSplit(ArrayList<ArrayList<Double>> traindata,
+	public Node dealWithNoSplit(ArrayList<ArrayList<Double>> traindata,
 			Node currentNode) {
 		double countPos = 0.0;
 		double countNeg = 0.0;
 
 		for (ArrayList<Double> row : traindata) {
-			for (Double value : row) {
-				if (value == 0.0)
+			
+			//for (Double value : row) {
+				if (row.get(row.size()-1) == 0.0)
 					countNeg++;
 				else
 					countPos++;
-			}
+			//}
 		}
 		currentNode.setLeaf(true);
 		if (countNeg > countPos) {
@@ -168,7 +169,7 @@ public class TDIDTUtils {
 			x.setAttribute("0");
 			x.setSplitpoint(0.0);
 			currentNode.setLeft(x);
-			;
+			
 		} else {
 
 			Node x = new Node();
@@ -176,6 +177,7 @@ public class TDIDTUtils {
 			x.setSplitpoint(1.0);
 			currentNode.setRight(x);
 		}
+		return currentNode;
 	}
 
 	public ArrayList<ArrayList<Double>> getSortedData(

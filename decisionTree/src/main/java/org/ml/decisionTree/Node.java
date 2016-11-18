@@ -12,6 +12,12 @@ public class Node {
 		return attributeIndex;
 	}
 
+	@Override
+	public String toString() {
+		return "Node [attribute=" + attribute + ", splitpoint=" + splitpoint + ", attributeIndex=" + attributeIndex
+				+ ", children=" + children + ", isLeaf=" + isLeaf + "]";
+	}
+
 	public void setAttributeIndex(int attributeIndex) {
 		this.attributeIndex = attributeIndex;
 	}
@@ -24,7 +30,7 @@ public class Node {
 		this.splitpoint = splitpoint;
 	}
 
-	public ArrayList<Node> children;
+	public ArrayList<Node> children = new ArrayList<Node>();
 	boolean isLeaf;
 
 	public Node(String attribute) {
@@ -40,14 +46,24 @@ public class Node {
 	}
 
 	public Node getLeft() {
+		if(children.isEmpty())
+			return null;
+		
 		return this.children.get(0);
 	}
 
 	public Node getRight() {
+		if(children.isEmpty()){
+			return null;
+		}
 		return this.children.get(1);
 	}
 
 	public void setRight(Node a) {
+		if(children.isEmpty()){
+			children.add(null);
+		}
+		
 		this.children.add(1, a);
 	}
 

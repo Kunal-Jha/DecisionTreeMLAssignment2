@@ -3,6 +3,9 @@ package org.ml.decisionTree;
 public class Tuple {
 	Double informationGain;
 	Double splitPoint;
+	
+	
+
 	int selectedIndex;
 	Double colSplitPoint; // Not applicable for col split
 
@@ -42,6 +45,12 @@ public class Tuple {
 
 	public Double getInformationGain() {
 		return informationGain;
+	}
+	
+	@Override
+	public String toString() {
+		return "Tuple [informationGain=" + informationGain + ", splitPoint=" + splitPoint + ", selectedIndex="
+				+ selectedIndex + ", colSplitPoint=" + colSplitPoint + "]";
 	}
 
 }
