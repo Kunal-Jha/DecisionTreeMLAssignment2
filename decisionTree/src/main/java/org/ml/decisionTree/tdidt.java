@@ -23,10 +23,9 @@ public class tdidt {
 
 	public static void main(String[] args) {
 		tdidt algo = new tdidt("./assets/gene_expression_training.csv");
-		algo.tdidt_recursive(algo.trainingData, algo.attributesList, algo.root,
-				algo.root, algo.nodeIndex);
+		algo.tdidt_recursive(algo.trainingData, algo.attributesList, algo.root, algo.root, algo.nodeIndex);
 		algo.drawTree();
-		// algo.accuracyTest("./assets/gene_expression_test.csv");
+		algo.accuracyTest("./assets/gene_expression_test.csv");
 	}
 
 	tdidt(String path) {
@@ -36,22 +35,19 @@ public class tdidt {
 		this.attributesList = trainingInput.getAttributes();
 		this.root = new Node(Integer.toString(nodeIndex));
 		this.utility = new TDIDTUtils();
-		this.graph = new DefaultDirectedGraph<Node, DefaultEdge>(
-				DefaultEdge.class);
+		this.graph = new DefaultDirectedGraph<Node, DefaultEdge>(DefaultEdge.class);
 		this.accuracy = 0;
 	}
 
-	public void getDOTFile(DirectedGraph<Node, DefaultEdge> graph)
-			throws IOException {
+	public void getDOTFile(DirectedGraph<Node, DefaultEdge> graph) throws IOException {
 
-		DOTExporter<Node, DefaultEdge> dot = new DOTExporter<Node, DefaultEdge>(
-				new VertexNameProvider<Node>() {
-					@Override
-					public String getVertexName(Node currentnode) {
-						return String.valueOf(currentnode.getAttribute());
+		DOTExporter<Node, DefaultEdge> dot = new DOTExporter<Node, DefaultEdge>(new VertexNameProvider<Node>() {
+			@Override
+			public String getVertexName(Node currentnode) {
+				return String.valueOf(currentnode.getAttribute());
 
-					}
-				}, null, null);
+			}
+		}, null, null);
 		String path = "./assets/trainingDataTree.dot";
 		FileWriter fwriter = new FileWriter(new File(path));
 		dot.export(fwriter, graph);
@@ -84,17 +80,20 @@ public class tdidt {
 			drawTreeRecursively(current.getRight());
 		}
 	}
+
 	/****************/
 	int DEPTH_ALLOWED = 3;
 	int currentDepth = 1;
+
 	/****************/
-	
-	public Node tdidt_recursive(ArrayList<ArrayList<Double>> traindata,
-			ArrayList<String> attributesList, Node root, Node currentNode,
-			int nodeCount) {
+
+	public Node tdidt_recursive(ArrayList<ArrayList<Double>> traindata, ArrayList<String> attributesList, Node root,
+			Node currentNode, int nodeCount) {
+
+		System.out.println(currentDepth + " " + traindata.size());
 
 		// if the examples are perfectly classified
-		if (!traindata.isEmpty() ) {
+		if (!traindata.isEmpty()) {
 			if (utility.isPerfectlyClassified(traindata)) {
 				currentNode.setLeaf(true);
 				currentNode.setSplitpoint(Double.MIN_VALUE);
@@ -103,11 +102,12 @@ public class tdidt {
 			}
 		}
 
-		Tuple attribute = utility.chooseAttribute(traindata, attributesList,
-				currentDepth, DEPTH_ALLOWED);
+		Tuple attribute = utility.chooseAttribute(traindata, attributesList, currentDepth, DEPTH_ALLOWED);
 
 		if ((attribute == null)) {
+			// System.out.println("afsasf");
 			utility.dealWithNoSplit(traindata, currentNode);
+
 			return root;
 		}
 		ArrayList<ArrayList<Double>> lessThanBranchData = new ArrayList<ArrayList<Double>>();
@@ -115,9 +115,14 @@ public class tdidt {
 
 		// TODO check the if condition
 		for (int i = 0; i < traindata.size(); i++) {
-			if (traindata.get(i).get(attribute.getSelectedIndex()) < attribute
-					.getColSplitPoint()) {
+			Double x = traindata.get(i).get(attribute.getSelectedIndex());
+			// System.out.println("
+			// "+Double.compare(traindata.get(i).get(attribute.getSelectedIndex()),
+			// attribute.getSplitPoint()));
+
+			if (Double.compare(traindata.get(i).get(attribute.getSelectedIndex()), attribute.getSplitPoint()) < 0) {
 				traindata.get(i).remove(attribute.getSelectedIndex());// removing
+
 				// the
 				// already
 				// evaluated
@@ -130,53 +135,50 @@ public class tdidt {
 		}
 
 		String attributeName = attributesList.get(attribute.getSelectedIndex());
-		
+
 		// TODO problem is here. delete more efficiently
-		if(!attributesList.isEmpty()){
+		if (!attributesList.isEmpty()) {
 			attributesList.remove(attribute.getSelectedIndex());
 		}
 		// TODO Check passing of Node Index it should be equal to 0s
 		// Storing Tree Information
 		this.nodeIndex++;
-		
-		Node leftNode = new Node("\"" +/* Integer.toString(nodeIndex) +*/ ""+ attributeName + " < " + attribute.getColSplitPoint() + "\"");
-		
-		this.nodeIndex++;
-		Node rightNode = new Node("\""+/*Integer.toString(nodeIndex) +*/ ""+ attributeName+ " > " + attribute.getColSplitPoint() +"\"");
-		
-		
 
-		
+		Node leftNode = new Node("\"" + /* Integer.toString(nodeIndex) + */ "" + attributeName + " < "
+				+ attribute.getColSplitPoint() + "\"");
+
+		this.nodeIndex++;
+		Node rightNode = new Node("\"" + /* Integer.toString(nodeIndex) + */ "" + attributeName + " > "
+				+ attribute.getColSplitPoint() + "\"");
+
 		currentNode.setLeft(leftNode);
 		currentNode.setRight(rightNode);
-		currentNode.setSplitpoint(attribute.getColSplitPoint());
+		currentNode.setSplitpoint(attribute.getSplitPoint());
 		currentNode.setAttributeIndex(attribute.getSelectedIndex());
-		
-		//System.out.println("- " + leftNode.toString());
-		//System.out.println(rightNode.toString());
-		
-		if(currentDepth < DEPTH_ALLOWED) {
-			currentDepth ++;
+
+		// System.out.println("- " + leftNode.toString());
+		// System.out.println(rightNode.toString());
+
+		if (currentDepth < DEPTH_ALLOWED) {
+			currentDepth++;
 			System.out.println(leftNode.attribute + " " + currentDepth);
-			tdidt_recursive(lessThanBranchData, attributesList, root, leftNode,
-				this.nodeIndex);
-			currentDepth --;
+			tdidt_recursive(lessThanBranchData, attributesList, root, leftNode, this.nodeIndex);
+			currentDepth--;
 		} else {
 			utility.dealWithNoSplit(traindata, leftNode);
 		}
-		
-		if(currentDepth < DEPTH_ALLOWED) {
-			currentDepth ++;
+
+		if (currentDepth < DEPTH_ALLOWED) {
+			currentDepth++;
 			System.out.println(rightNode.attribute + " " + currentDepth);
-			tdidt_recursive(greaterThanBranchData, attributesList, root, rightNode,
-				this.nodeIndex);
-			currentDepth --;
+			tdidt_recursive(greaterThanBranchData, attributesList, root, rightNode, this.nodeIndex);
+			currentDepth--;
 		} else {
-			
+
 			utility.dealWithNoSplit(traindata, rightNode);
 
 		}
-		//System.out.println(currentDepth);
+		// System.out.println(currentDepth);
 
 		return root;
 	}
@@ -186,7 +188,7 @@ public class tdidt {
 		Double error = 0.0;
 		ArrayList<ArrayList<Double>> testingData = testingInput.getInput();
 		for (ArrayList<Double> a : testingData) {
-			if (a.get(a.size() - 1).equals(test(this.root, a))) {
+			if (Double.compare(a.get(a.size() - 1), test(this.root, a)) == 0) {
 				error++;
 			}
 
@@ -199,7 +201,7 @@ public class tdidt {
 	public Double test(Node currentNode, ArrayList<Double> pattern) {
 		if (currentNode.isLeaf() == false) {
 			int index = currentNode.getAttributeIndex();
-			if (pattern.get(index) < currentNode.getSplitpoint())
+			if (Double.compare(pattern.get(index), currentNode.getSplitpoint()) < 0)
 				return test(currentNode.getLeft(), pattern);
 			else
 				return test(currentNode.getRight(), pattern);

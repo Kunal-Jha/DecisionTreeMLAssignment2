@@ -35,7 +35,7 @@ public class TDIDTUtils {
 		Double colSplitPointValue = 0.0;
 		for (int i = 0; i < attributesList.size() - 1; i++) {
 			Tuple columnTuple = this.getBestSplitforAttribute(this
-					.getAttributeClassifierColumn(trainingData, i));
+					.getAttributeClassifierColumn(trainingData, i), i);
 			columnTuple.setSelectedIndex(i);
 
 			Double currentInformationGain = columnTuple.getInformationGain();
@@ -43,7 +43,7 @@ public class TDIDTUtils {
 			if (currentInformationGain > maxInformationGain_InterAttribute) {
 				maxInformationGain_InterAttribute = currentInformationGain;
 				splitPointValue = columnTuple.getSplitPoint();
-				selectedAttributeIndex = columnTuple.getSelectedIndex();
+				selectedAttributeIndex = i;
 				colSplitPointValue = columnTuple.getSplitPoint();
 			}
 		}
@@ -56,7 +56,7 @@ public class TDIDTUtils {
 	}
 
 	public Tuple getBestSplitforAttribute(
-			ArrayList<ArrayList<Double>> attributeColumnList) {
+			ArrayList<ArrayList<Double>> attributeColumnList, int attributeIndex) {
 		ArrayList<ArrayList<Double>> sortedAttributeColumnList = getSortedData(
 				attributeColumnList, 0);
 		ArrayList<ArrayList<Double>> splitsGainValues = new ArrayList<ArrayList<Double>>();
@@ -67,7 +67,9 @@ public class TDIDTUtils {
 			// TODO check the logic for this part boys
 			if (sortedAttributeColumnList.get(i).get(1) != sortedAttributeColumnList
 					.get(i + 1).get(1)) { // if flip in class value 0-1 or 1-0
+				
 				setOne = sortedAttributeColumnList.subList(0, i);
+				//System.out.println(setOne.toString());
 				setTwo = sortedAttributeColumnList
 						.subList(i + 1, totalSize - 1);
 
@@ -100,18 +102,25 @@ public class TDIDTUtils {
 
 				double splitPoint = (sortedAttributeColumnList.get(i).get(0) + sortedAttributeColumnList
 						.get(i + 1).get(0)) / 2.0;
+				
+				if(Double.compare(splitPoint, 0.0) == 0){
+					System.out.println("-----" + splitPoint);
+				}
+				
+				
 
 				ArrayList<Double> rowInfoGain = new ArrayList<Double>();
 
 				rowInfoGain.add(splitPoint);
 				rowInfoGain.add(informationGain);
+				
 
 				splitsGainValues.add(rowInfoGain);
 			}
 		}
 
 		Double maxInformationGain = Double.MIN_VALUE, resultSplitPoint = 0.0;
-		int index = -1;
+		//int index = -1;
 		for (int i = 0; i < splitsGainValues.size(); i++) {
 			if (splitsGainValues.get(i).get(1) >= maxInformationGain) {
 				resultSplitPoint = splitsGainValues.get(i).get(0);
@@ -120,7 +129,7 @@ public class TDIDTUtils {
 			}
 		}
 
-		return new Tuple(resultSplitPoint, maxInformationGain, index);
+		return new Tuple(resultSplitPoint, maxInformationGain, attributeIndex);
 	}
 
 	public Double getEntropy(int positiveCount, int negativeCount) {
@@ -151,14 +160,14 @@ public class TDIDTUtils {
 	// TODO:Check Dataset
 	public Node dealWithNoSplit(ArrayList<ArrayList<Double>> traindata,
 			Node currentNode) {
-		double countPos = 0.0;
-		double countNeg = 0.0;
+		int countPos = 0;
+		int countNeg = 0;
 
 		for (ArrayList<Double> row : traindata) {
 			
 			//for (Double value : row) {
-				if (row.get(row.size()-1) == 0.0)
-					countNeg++;
+				if (row.get(row.size()-1) == 0)
+					countNeg+=1;
 				else
 					countPos++;
 			//}
@@ -177,6 +186,7 @@ public class TDIDTUtils {
 			x.setSplitpoint(1.0);
 			currentNode.setRight(x);
 		}
+		
 		return currentNode;
 	}
 
