@@ -67,7 +67,7 @@ public class TDIDTUtils {
 			// TODO check the logic for this part boys
 			if (sortedAttributeColumnList.get(i).get(1) != sortedAttributeColumnList
 					.get(i + 1).get(1)) { // if flip in class value 0-1 or 1-0
-				
+
 				setOne = sortedAttributeColumnList.subList(0, i);
 				//System.out.println(setOne.toString());
 				setTwo = sortedAttributeColumnList
@@ -102,18 +102,18 @@ public class TDIDTUtils {
 
 				double splitPoint = (sortedAttributeColumnList.get(i).get(0) + sortedAttributeColumnList
 						.get(i + 1).get(0)) / 2.0;
-				
+
 				if(Double.compare(splitPoint, 0.0) == 0){
 					System.out.println("-----" + splitPoint);
 				}
-				
-				
+
+
 
 				ArrayList<Double> rowInfoGain = new ArrayList<Double>();
 
 				rowInfoGain.add(splitPoint);
 				rowInfoGain.add(informationGain);
-				
+
 
 				splitsGainValues.add(rowInfoGain);
 			}
@@ -164,7 +164,7 @@ public class TDIDTUtils {
 		int countNeg = 0;
 
 		for (ArrayList<Double> row : traindata) {
-			
+
 			//for (Double value : row) {
 				if (row.get(row.size()-1) == 0)
 					countNeg+=1;
@@ -178,7 +178,7 @@ public class TDIDTUtils {
 			x.setAttribute("0");
 			x.setSplitpoint(0.0);
 			currentNode.setLeft(x);
-			
+
 		} else {
 
 			Node x = new Node();
@@ -186,7 +186,7 @@ public class TDIDTUtils {
 			x.setSplitpoint(1.0);
 			currentNode.setRight(x);
 		}
-		
+
 		return currentNode;
 	}
 

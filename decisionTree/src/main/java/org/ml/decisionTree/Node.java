@@ -1,7 +1,5 @@
 package org.ml.decisionTree;
 
-import java.util.ArrayList;
-
 public class Node {
 
 	public String attribute;
@@ -14,8 +12,9 @@ public class Node {
 
 	@Override
 	public String toString() {
-		return "Node [attribute=" + attribute + ", splitpoint=" + splitpoint + ", attributeIndex=" + attributeIndex
-				+ ", children=" + children + ", isLeaf=" + isLeaf + "]";
+		return "Node [attribute=" + attribute + ", splitpoint=" + splitpoint
+				+ ", attributeIndex=" + attributeIndex + " isLeaf=" + isLeaf
+				+ "]";
 	}
 
 	public void setAttributeIndex(int attributeIndex) {
@@ -30,41 +29,37 @@ public class Node {
 		this.splitpoint = splitpoint;
 	}
 
-	public ArrayList<Node> children = new ArrayList<Node>();
+	public Node leftChild;
+	public Node rightChild;
+
 	boolean isLeaf;
 
 	public Node(String attribute) {
 
 		this.attribute = attribute;
-		this.children = new ArrayList<Node>();
 		this.isLeaf = false;
 		this.attributeIndex = -1;
+		leftChild = new Node();
+		rightChild = new Node();
 	}
 
 	public void setLeft(Node a) {
-		this.children.add(0, a);
+		this.leftChild = a;
 	}
 
 	public Node getLeft() {
-		if(children.isEmpty())
-			return null;
-		
-		return this.children.get(0);
+
+		return this.leftChild;
 	}
 
 	public Node getRight() {
-		if(children.isEmpty()){
-			return null;
-		}
-		return this.children.get(1);
+
+		return this.rightChild;
 	}
 
 	public void setRight(Node a) {
-		if(children.isEmpty()){
-			children.add(null);
-		}
-		
-		this.children.add(1, a);
+		this.rightChild = a;
+
 	}
 
 	public boolean isLeaf() {

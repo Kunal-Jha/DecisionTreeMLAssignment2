@@ -23,31 +23,34 @@ public class tdidt {
 
 	public static void main(String[] args) {
 		tdidt algo = new tdidt("./assets/gene_expression_training.csv");
-		algo.tdidt_recursive(algo.trainingData, algo.attributesList, algo.root, algo.root, algo.nodeIndex);
+		algo.tdidt_recursive(algo.trainingData, algo.attributesList, algo.root,
+				algo.root, algo.nodeIndex);
 		algo.drawTree();
 		algo.accuracyTest("./assets/gene_expression_test.csv");
 	}
 
 	tdidt(String path) {
-		// TODO Auto-generated constructor stub
 		TrainInput trainingInput = new TrainInput(path);
 		this.trainingData = trainingInput.getInput();
 		this.attributesList = trainingInput.getAttributes();
-		this.root = new Node(Integer.toString(nodeIndex));
+		this.root = new Node("0");
 		this.utility = new TDIDTUtils();
-		this.graph = new DefaultDirectedGraph<Node, DefaultEdge>(DefaultEdge.class);
+		this.graph = new DefaultDirectedGraph<Node, DefaultEdge>(
+				DefaultEdge.class);
 		this.accuracy = 0;
 	}
 
-	public void getDOTFile(DirectedGraph<Node, DefaultEdge> graph) throws IOException {
+	public void getDOTFile(DirectedGraph<Node, DefaultEdge> graph)
+			throws IOException {
 
-		DOTExporter<Node, DefaultEdge> dot = new DOTExporter<Node, DefaultEdge>(new VertexNameProvider<Node>() {
-			@Override
-			public String getVertexName(Node currentnode) {
-				return String.valueOf(currentnode.getAttribute());
+		DOTExporter<Node, DefaultEdge> dot = new DOTExporter<Node, DefaultEdge>(
+				new VertexNameProvider<Node>() {
+					@Override
+					public String getVertexName(Node currentnode) {
+						return String.valueOf(currentnode.getAttribute());
 
-			}
-		}, null, null);
+					}
+				}, null, null);
 		String path = "./assets/trainingDataTree.dot";
 		FileWriter fwriter = new FileWriter(new File(path));
 		dot.export(fwriter, graph);
@@ -60,7 +63,6 @@ public class tdidt {
 		try {
 			this.getDOTFile(graph);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -69,16 +71,15 @@ public class tdidt {
 	public void drawTreeRecursively(Node current) {
 		if (current.getLeft() != null) {
 			graph.addVertex(current.getLeft());
-
 			graph.addEdge(current, current.getLeft());
 			drawTreeRecursively(current.getLeft());
 		}
 		if (current.getRight() != null) {
 			graph.addVertex(current.getRight());
-
 			graph.addEdge(current, current.getRight());
 			drawTreeRecursively(current.getRight());
 		}
+
 	}
 
 	/****************/
@@ -87,8 +88,9 @@ public class tdidt {
 
 	/****************/
 
-	public Node tdidt_recursive(ArrayList<ArrayList<Double>> traindata, ArrayList<String> attributesList, Node root,
-			Node currentNode, int nodeCount) {
+	public Node tdidt_recursive(ArrayList<ArrayList<Double>> traindata,
+			ArrayList<String> attributesList, Node root, Node currentNode,
+			int nodeCount) {
 
 		System.out.println(currentDepth + " " + traindata.size());
 
@@ -100,86 +102,79 @@ public class tdidt {
 				return root;
 
 			}
-		}
 
-		Tuple attribute = utility.chooseAttribute(traindata, attributesList, currentDepth, DEPTH_ALLOWED);
+			Tuple attribute = utility.chooseAttribute(traindata,
+					attributesList, currentDepth, DEPTH_ALLOWED);
 
-		if ((attribute == null)) {
-			// System.out.println("afsasf");
-			utility.dealWithNoSplit(traindata, currentNode);
+			if ((attribute == null)) {
+				utility.dealWithNoSplit(traindata, currentNode);
 
-			return root;
-		}
-		ArrayList<ArrayList<Double>> lessThanBranchData = new ArrayList<ArrayList<Double>>();
-		ArrayList<ArrayList<Double>> greaterThanBranchData = new ArrayList<ArrayList<Double>>();
-
-		// TODO check the if condition
-		for (int i = 0; i < traindata.size(); i++) {
-			Double x = traindata.get(i).get(attribute.getSelectedIndex());
-			// System.out.println("
-			// "+Double.compare(traindata.get(i).get(attribute.getSelectedIndex()),
-			// attribute.getSplitPoint()));
-
-			if (Double.compare(traindata.get(i).get(attribute.getSelectedIndex()), attribute.getSplitPoint()) < 0) {
-				traindata.get(i).remove(attribute.getSelectedIndex());// removing
-
-				// the
-				// already
-				// evaluated
-				// attribute.
-				lessThanBranchData.add(traindata.get(i));
-			} else {
-				traindata.get(i).remove(attribute.getSelectedIndex());
-				greaterThanBranchData.add(traindata.get(i));
+				return root;
 			}
+			if (nodeIndex == 0) {
+			}
+			ArrayList<ArrayList<Double>> lessThanBranchData = new ArrayList<ArrayList<Double>>();
+			ArrayList<ArrayList<Double>> greaterThanBranchData = new ArrayList<ArrayList<Double>>();
+
+			for (int i = 0; i < traindata.size(); i++) {
+
+				if (Double.compare(
+						traindata.get(i).get(attribute.getSelectedIndex()),
+						attribute.getSplitPoint()) < 0) {
+					traindata.get(i).remove(attribute.getSelectedIndex());// removing
+
+					lessThanBranchData.add(traindata.get(i));
+				} else {
+					traindata.get(i).remove(attribute.getSelectedIndex());
+					greaterThanBranchData.add(traindata.get(i));
+				}
+			}
+
+			String attributeName = attributesList.get(attribute
+					.getSelectedIndex());
+
+			if (!attributesList.isEmpty()) {
+				attributesList.remove(attribute.getSelectedIndex());
+			}
+			this.nodeIndex++;
+
+			Node leftNode = new Node("\""
+					+ /* Integer.toString(nodeIndex) + */"" + attributeName
+					+ " < " + attribute.getColSplitPoint() + "\"");
+
+			this.nodeIndex++;
+			Node rightNode = new Node("\""
+					+ /* Integer.toString(nodeIndex) + */"" + attributeName
+					+ " > " + attribute.getColSplitPoint() + "\"");
+
+			currentNode.setLeft(leftNode);
+			currentNode.setRight(rightNode);
+			currentNode.setSplitpoint(attribute.getSplitPoint());
+			currentNode.setAttributeIndex(attribute.getSelectedIndex());
+
+			if (currentDepth < DEPTH_ALLOWED) {
+				currentDepth++;
+				System.out.println(leftNode.attribute + " " + currentDepth);
+				tdidt_recursive(lessThanBranchData, attributesList, root,
+						leftNode, this.nodeIndex);
+				currentDepth--;
+			} else {
+				utility.dealWithNoSplit(traindata, leftNode);
+			}
+
+			if (currentDepth < DEPTH_ALLOWED) {
+				currentDepth++;
+				System.out.println(rightNode.attribute + " " + currentDepth);
+				tdidt_recursive(greaterThanBranchData, attributesList, root,
+						rightNode, this.nodeIndex);
+				currentDepth--;
+			} else {
+
+				utility.dealWithNoSplit(traindata, rightNode);
+
+			}
+
 		}
-
-		String attributeName = attributesList.get(attribute.getSelectedIndex());
-
-		// TODO problem is here. delete more efficiently
-		if (!attributesList.isEmpty()) {
-			attributesList.remove(attribute.getSelectedIndex());
-		}
-		// TODO Check passing of Node Index it should be equal to 0s
-		// Storing Tree Information
-		this.nodeIndex++;
-
-		Node leftNode = new Node("\"" + /* Integer.toString(nodeIndex) + */ "" + attributeName + " < "
-				+ attribute.getColSplitPoint() + "\"");
-
-		this.nodeIndex++;
-		Node rightNode = new Node("\"" + /* Integer.toString(nodeIndex) + */ "" + attributeName + " > "
-				+ attribute.getColSplitPoint() + "\"");
-
-		currentNode.setLeft(leftNode);
-		currentNode.setRight(rightNode);
-		currentNode.setSplitpoint(attribute.getSplitPoint());
-		currentNode.setAttributeIndex(attribute.getSelectedIndex());
-
-		// System.out.println("- " + leftNode.toString());
-		// System.out.println(rightNode.toString());
-
-		if (currentDepth < DEPTH_ALLOWED) {
-			currentDepth++;
-			System.out.println(leftNode.attribute + " " + currentDepth);
-			tdidt_recursive(lessThanBranchData, attributesList, root, leftNode, this.nodeIndex);
-			currentDepth--;
-		} else {
-			utility.dealWithNoSplit(traindata, leftNode);
-		}
-
-		if (currentDepth < DEPTH_ALLOWED) {
-			currentDepth++;
-			System.out.println(rightNode.attribute + " " + currentDepth);
-			tdidt_recursive(greaterThanBranchData, attributesList, root, rightNode, this.nodeIndex);
-			currentDepth--;
-		} else {
-
-			utility.dealWithNoSplit(traindata, rightNode);
-
-		}
-		// System.out.println(currentDepth);
-
 		return root;
 	}
 

@@ -10,11 +10,6 @@ public class TrainInput {
 	private ArrayList<String> attributes = new ArrayList<String>();
 	private ArrayList<ArrayList<Double>> input = new ArrayList<ArrayList<Double>>();
 
-	/*
-	 * public static void main(String[] args) { TrainInput tn = new
-	 * TrainInput("./assets/gene_expression_training.csv");
-	 * System.out.print(tn.input); }
-	 */
 	public void readData() {
 
 		BufferedReader buffer = null;
